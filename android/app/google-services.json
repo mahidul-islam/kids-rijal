@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "999646883076",
+    "project_id": "kids-rijal",
+    "storage_bucket": "kids-rijal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999646883076:android:db64e48edbd87f5651f451",
+        "android_client_info": {
+          "package_name": "com.arrijal.kids_rijal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "999646883076-6qhodrn2qn0parndlb91j9b13tto9e6u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSjV4Ngo8cG12OU2RRlhyilaQOH1A-FjI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "999646883076-6qhodrn2qn0parndlb91j9b13tto9e6u.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "999646883076-sof7dknghn180a3otn482gm1adclt9qv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.arrijal.kidsRijal"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
