@@ -11,6 +11,8 @@ dependencies:
   flutter: 
     sdk: flutter
   firebase_core: ^2.10.0
+  path_drawing: ^1.0.1
+  xml: ^6.3.0
 
 dev_dependencies: 
   flutter_lints: 2.0.1
@@ -19,4 +21,7 @@ dev_dependencies:
 
 flutter: 
   uses-material-design: true
+
+  assets:
+    - assets/
 
