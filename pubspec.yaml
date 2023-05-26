@@ -13,6 +13,7 @@ dependencies:
   firebase_core: ^2.10.0
   path_drawing: ^1.0.1
   xml: ^6.3.0
+  collection: ^1.17.1
 
 dev_dependencies: 
   flutter_lints: 2.0.1
