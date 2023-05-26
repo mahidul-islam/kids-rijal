@@ -11,17 +11,41 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        controller.pageController
-            .nextPage(duration: .2.seconds, curve: Curves.bounceInOut);
-      }),
       appBar: AppBar(
-        title: const Text('HomeView'),
+        title: const Text('Example R&D'),
         centerTitle: true,
       ),
-      body: PageView(
-        controller: controller.pageController,
-        children: const <Widget>[WorldMap(), BlurView('assets/mine.png')],
+      body: Stack(
+        children: [
+          PageView(
+            controller: controller.pageController,
+            children: const <Widget>[WorldMap(), BlurView('assets/mine.png')],
+          ),
+          Positioned(
+            bottom: 20,
+            right: 0,
+            left: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                FloatingActionButton(
+                  onPressed: () {
+                    controller.pageController.previousPage(
+                        duration: .2.seconds, curve: Curves.bounceInOut);
+                  },
+                  child: const Icon(Icons.arrow_back_ios),
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    controller.pageController.nextPage(
+                        duration: .2.seconds, curve: Curves.bounceInOut);
+                  },
+                  child: const Icon(Icons.arrow_forward_ios),
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
