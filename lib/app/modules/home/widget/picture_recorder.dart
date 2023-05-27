@@ -1,4 +1,5 @@
-import 'dart:ui';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 const kCanvasSize = 300.0;
@@ -10,88 +11,168 @@ class PictureRecorderBoard extends StatefulWidget {
   State<PictureRecorderBoard> createState() => _PictureRecorderBoardState();
 }
 
+Future<ui.Image> getImage({required List<DrawingPoint?> points}) async {
+  final ui.PictureRecorder recorder = ui.PictureRecorder();
+  Canvas canvas = Canvas(recorder);
+  CustomPainter painter = _DrawingPainter(points);
+  painter.paint(canvas, const Size(kCanvasSize, kCanvasSize));
+  final ui.Picture picture = recorder.endRecording();
+  return await picture.toImage(kCanvasSize.toInt(), kCanvasSize.toInt());
+}
+
+Future<Map<Color, int>> getImageStat(
+    {required List<DrawingPoint?> points}) async {
+  Map<Color, int> res = <Color, int>{};
+  ui.Image image = await getImage(points: points);
+  List<int> rgbList;
+  ByteData? data =
+      await image.toByteData(format: ui.ImageByteFormat.rawStraightRgba);
+  rgbList = data?.buffer.asUint8List().toList() ?? Uint8List(0);
+  for (var x = 0; x < rgbList.length; x += 4) {
+    final int r = rgbList[x];
+    final int g = rgbList[x + 1];
+    final int b = rgbList[x + 2];
+    Color color = Color.fromRGBO(r, g, b, 1);
+    if (!res.keys.contains(color)) {
+      res[color] = 1;
+    } else {
+      res[color] = (res[color] ?? 0) + 1;
+    }
+  }
+  return res;
+}
+
+String getPercentage(Map<Color, int> perOfColor, int index) {
+  int sum = 0;
+  for (int i = 0; i < perOfColor.length; i++) {
+    sum = sum + perOfColor.values.elementAt(i);
+  }
+  return (perOfColor.values.elementAt(index) / sum).toStringAsFixed(2);
+}
+
 class _PictureRecorderBoardState extends State<PictureRecorderBoard> {
-  Color selectedColor = Colors.black;
-  double strokeWidth = 5;
+  Color selectedColor = Colors.red;
+  double strokeWidth = 30;
   List<DrawingPoint?> drawingPoints = [];
-  List<Color> colors = [
-    Colors.pink,
-    Colors.red,
-    Colors.black,
-    Colors.yellow,
-    Colors.amberAccent,
-    Colors.purple,
-    Colors.green,
-  ];
+  List<Color> colors = [Colors.pink, Colors.red, Colors.blue, Colors.yellow];
+  Map<Color, int> perOfColor = <Color, int>{};
+
+  ByteData? imgBytes;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
           Scaffold(
-            body: Center(
-              child: GestureDetector(
-                onPanStart: (details) {
-                  setState(() {
-                    drawingPoints.add(
-                      DrawingPoint(
-                        details.localPosition,
-                        Paint()
-                          ..color = selectedColor
-                          ..isAntiAlias = true
-                          ..strokeWidth = strokeWidth
-                          ..strokeCap = StrokeCap.round,
-                      ),
-                    );
-                  });
-                },
-                onPanUpdate: (details) {
-                  setState(() {
-                    drawingPoints.add(
-                      DrawingPoint(
-                        details.localPosition,
-                        Paint()
-                          ..color = selectedColor
-                          ..isAntiAlias = true
-                          ..strokeWidth = strokeWidth
-                          ..strokeCap = StrokeCap.round,
-                      ),
-                    );
-                  });
-                },
-                onPanEnd: (details) {
-                  setState(() {
-                    drawingPoints.add(null);
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.greenAccent, width: 2)),
-                  width: kCanvasSize,
-                  height: kCanvasSize,
-                  child: CustomPaint(
-                    painter: _DrawingPainter(drawingPoints),
-                    child: Container(),
+            body: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Column(
+                    children: <Widget>[
+                      const SizedBox(height: 20),
+                      for (int i = 0; i < perOfColor.length; i++) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              height: 20,
+                              width: 20,
+                              color: perOfColor.keys.elementAt(i),
+                            ),
+                            const SizedBox(width: 50),
+                            Text(getPercentage(perOfColor, i)),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                      ]
+                    ],
                   ),
-                ),
+                  imgBytes != null
+                      ? Center(
+                          child: Image.memory(
+                          Uint8List.view(imgBytes!.buffer),
+                          width: kCanvasSize / 3,
+                          height: kCanvasSize / 3,
+                        ))
+                      : Container(),
+                  GestureDetector(
+                    onPanStart: (details) {
+                      setState(() {
+                        drawingPoints.add(
+                          DrawingPoint(
+                            details.localPosition,
+                            Paint()
+                              ..color = selectedColor
+                              ..isAntiAlias = true
+                              ..strokeWidth = strokeWidth
+                              ..strokeCap = StrokeCap.round,
+                          ),
+                        );
+                      });
+                    },
+                    onPanUpdate: (details) {
+                      setState(() {
+                        drawingPoints.add(
+                          DrawingPoint(
+                            details.localPosition,
+                            Paint()
+                              ..color = selectedColor
+                              ..isAntiAlias = true
+                              ..strokeWidth = strokeWidth
+                              ..strokeCap = StrokeCap.round,
+                          ),
+                        );
+                      });
+                    },
+                    onPanEnd: (details) async {
+                      drawingPoints.add(null);
+                      ui.Image img = await getImage(points: drawingPoints);
+                      imgBytes =
+                          await img.toByteData(format: ui.ImageByteFormat.png);
+                      perOfColor = await getImageStat(
+                        points: drawingPoints,
+                      );
+                      setState(() {});
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Colors.greenAccent, width: 2)),
+                      width: kCanvasSize,
+                      height: kCanvasSize,
+                      child: CustomPaint(
+                        painter: _DrawingPainter(drawingPoints),
+                        child: Container(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
           Positioned(
             top: 40,
-            right: 30,
-            child: Row(
+            right: 0,
+            child: Column(
               children: [
                 Slider(
-                  min: 0,
-                  max: 40,
+                  min: 20,
+                  max: 100,
                   value: strokeWidth,
                   onChanged: (val) => setState(() => strokeWidth = val),
                 ),
-                ElevatedButton.icon(
-                  onPressed: () => setState(() => drawingPoints = []),
-                  icon: const Icon(Icons.clear),
-                  label: const Text("Clear Board"),
+                MaterialButton(
+                  onPressed: () => setState(
+                    () {
+                      drawingPoints = [];
+                      perOfColor = {};
+                      imgBytes = null;
+                    },
+                  ),
+                  color: Colors.amberAccent,
+                  child: const Text("Clear"),
                 )
               ],
             ),
@@ -137,6 +218,7 @@ class _DrawingPainter extends CustomPainter {
 
   _DrawingPainter(this.drawingPoints);
 
+  // final PictureRecorder pictureRecorder;
   List<Offset> offsetsList = [];
 
   @override
@@ -147,16 +229,16 @@ class _DrawingPainter extends CustomPainter {
       0,
       0,
     ));
-    for (int i = 0; i < drawingPoints.length; i++) {
-      if (drawingPoints[i + 1] != null && drawingPoints[i] != null) {
+    for (int i = 0; i < drawingPoints.length - 1; i++) {
+      if (drawingPoints[i] != null && drawingPoints[i + 1] != null) {
         canvas.drawLine(drawingPoints[i]!.offset, drawingPoints[i + 1]!.offset,
-            drawingPoints[i]!.paint);
+            drawingPoints[i]!.paint..isAntiAlias = false);
       } else if (drawingPoints[i + 1] == null) {
         offsetsList.clear();
         offsetsList.add(drawingPoints[i]!.offset);
 
-        canvas.drawPoints(
-            PointMode.points, offsetsList, drawingPoints[i]!.paint);
+        canvas.drawPoints(ui.PointMode.points, offsetsList,
+            drawingPoints[i]!.paint..isAntiAlias = false);
       }
     }
   }
