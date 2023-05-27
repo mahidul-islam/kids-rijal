@@ -6,7 +6,8 @@ import 'dart:ui' as ui;
 import 'package:kids_rijal/app/utils/canvas_helpers.dart';
 
 class DrawingBoard extends StatefulWidget {
-  const DrawingBoard({super.key});
+  const DrawingBoard({super.key, required this.path});
+  final String path;
 
   @override
   State<DrawingBoard> createState() => _DrawingBoardState();
@@ -24,7 +25,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
 
   @override
   void initState() {
-    _load('assets/shoe.png');
+    _load(widget.path);
     super.initState();
   }
 

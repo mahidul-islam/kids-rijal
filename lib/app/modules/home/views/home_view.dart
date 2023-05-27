@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kids_rijal/app/modules/home/widget/blur_view.dart';
 import 'package:kids_rijal/app/modules/home/widget/drawing_app.dart';
+import 'package:kids_rijal/app/modules/home/widget/picture_recorder.dart';
 import 'package:kids_rijal/app/modules/home/widget/world_map.dart';
 
 import '../controllers/home_controller.dart';
@@ -21,7 +22,8 @@ class HomeView extends GetView<HomeController> {
           PageView(
             controller: controller.pageController,
             children: const <Widget>[
-              DrawingBoard(),
+              PictureRecorderBoard(),
+              DrawingBoard(path: 'assets/shoe.png'),
               WorldMap(),
               BlurView('assets/mine.png'),
             ],
