@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
 
+import 'package:kids_rijal/app/utils/canvas_helpers.dart';
+
 class BlurView extends StatefulWidget {
   const BlurView(this.imagePath, {Key? key}) : super(key: key);
   final String imagePath;
@@ -87,24 +89,4 @@ class BlurPaint extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
-}
-
-Matrix4 sizeToRect(Size src, Rect dst,
-    {BoxFit fit = BoxFit.contain, Alignment alignment = Alignment.center}) {
-  FittedSizes fs = applyBoxFit(fit, src, dst.size);
-  double scaleX = fs.destination.width / fs.source.width;
-  double scaleY = fs.destination.height / fs.source.height;
-  Size fittedSrc = Size(src.width * scaleX, src.height * scaleY);
-  Rect out = alignment.inscribe(fittedSrc, dst);
-
-  return Matrix4.identity()
-    ..translate(out.left, out.top)
-    ..scale(scaleX, scaleY);
-}
-
-/// Like [sizeToRect] but accepting a [Rect] as [src]
-Matrix4 rectToRect(Rect src, Rect dst,
-    {BoxFit fit = BoxFit.contain, Alignment alignment = Alignment.center}) {
-  return sizeToRect(src.size, dst, fit: fit, alignment: alignment)
-    ..translate(-src.left, -src.top);
 }
