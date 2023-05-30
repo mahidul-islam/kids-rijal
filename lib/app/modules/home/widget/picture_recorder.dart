@@ -47,7 +47,15 @@ String getPercentage(Map<Color, int> perOfColor, int index) {
   for (int i = 0; i < perOfColor.length; i++) {
     sum = sum + perOfColor.values.elementAt(i);
   }
-  return (perOfColor.values.elementAt(index) / sum).toStringAsFixed(2);
+  return '${((perOfColor.values.elementAt(index) / sum) * 100).toStringAsFixed(2)} %';
+}
+
+bool reduceIrrevalant(Map<Color, int> perOfColor, int value) {
+  int sum = 0;
+  for (int i = 0; i < perOfColor.length; i++) {
+    sum = sum + perOfColor.values.elementAt(i);
+  }
+  return (value / sum) > 0.01;
 }
 
 class _PictureRecorderBoardState extends State<PictureRecorderBoard> {
@@ -134,6 +142,13 @@ class _PictureRecorderBoardState extends State<PictureRecorderBoard> {
                       perOfColor = await getImageStat(
                         points: drawingPoints,
                       );
+                      perOfColor.removeWhere((Color color, int value) {
+                        if (reduceIrrevalant(perOfColor, value)) {
+                          return false;
+                        } else {
+                          return true;
+                        }
+                      });
                       setState(() {});
                     },
                     child: Container(
@@ -232,13 +247,13 @@ class _DrawingPainter extends CustomPainter {
     for (int i = 0; i < drawingPoints.length - 1; i++) {
       if (drawingPoints[i] != null && drawingPoints[i + 1] != null) {
         canvas.drawLine(drawingPoints[i]!.offset, drawingPoints[i + 1]!.offset,
-            drawingPoints[i]!.paint..isAntiAlias = false);
+            drawingPoints[i]!.paint);
       } else if (drawingPoints[i + 1] == null) {
         offsetsList.clear();
         offsetsList.add(drawingPoints[i]!.offset);
 
-        canvas.drawPoints(ui.PointMode.points, offsetsList,
-            drawingPoints[i]!.paint..isAntiAlias = false);
+        canvas.drawPoints(
+            ui.PointMode.points, offsetsList, drawingPoints[i]!.paint);
       }
     }
   }
