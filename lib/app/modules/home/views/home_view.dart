@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:kids_rijal/app/modules/home/widget/blur_view.dart';
 import 'package:kids_rijal/app/modules/home/widget/drawing_app.dart';
 import 'package:kids_rijal/app/modules/home/widget/picture_recorder.dart';
+import 'package:kids_rijal/app/modules/home/widget/shader.dart';
 import 'package:kids_rijal/app/modules/home/widget/world_map.dart';
 
 import '../controllers/home_controller.dart';
@@ -22,6 +23,7 @@ class HomeView extends GetView<HomeController> {
           PageView(
             controller: controller.pageController,
             children: const <Widget>[
+              ShaderExp('assets/shader/shader.frag'),
               PictureRecorderBoard(),
               DrawingBoard(path: 'assets/shoe.png'),
               WorldMap(),
