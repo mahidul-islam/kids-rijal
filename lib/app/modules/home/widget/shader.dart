@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -12,9 +14,12 @@ class ShaderExp extends StatefulWidget {
 class _ShaderExpState extends State<ShaderExp> {
   ui.FragmentProgram? fragmentProgram;
 
+  late TimerService _timerService;
+
   @override
   void initState() {
     super.initState();
+    _timerService = TimerService();
     _load(widget.shaderPath);
   }
 
@@ -25,20 +30,23 @@ class _ShaderExpState extends State<ShaderExp> {
 
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<Offset> notifier = ValueNotifier(Offset.infinite);
-    return Listener(
-      onPointerDown: (event) => notifier.value = event.localPosition,
-      onPointerMove: (event) => notifier.value = event.localPosition,
-      child: CustomPaint(
-        painter: BlurPaint(notifier, shader: fragmentProgram?.fragmentShader()),
-        child: const SizedBox.expand(),
-      ),
+    return AnimatedBuilder(
+      animation: _timerService,
+      builder: (context, child) {
+        ValueNotifier<Duration> notifier =
+            ValueNotifier(_timerService.currentDuration);
+        return CustomPaint(
+          painter:
+              BlurPaint(notifier, shader: fragmentProgram?.fragmentShader()),
+          child: const SizedBox.expand(),
+        );
+      },
     );
   }
 }
 
 class BlurPaint extends CustomPainter {
-  final ValueNotifier<Offset> notifier;
+  final ValueNotifier<Duration> notifier;
   final ui.FragmentShader? shader;
   final color = Colors.amberAccent;
 
@@ -51,10 +59,8 @@ class BlurPaint extends CustomPainter {
     }
     shader?.setFloat(0, size.width);
     shader?.setFloat(1, size.height);
-    shader?.setFloat(2, color.red.toDouble() / 255);
-    shader?.setFloat(3, color.green.toDouble() / 255);
-    shader?.setFloat(4, color.blue.toDouble() / 255);
-    shader?.setFloat(5, color.alpha.toDouble() / 255);
+    shader?.setFloat(2, notifier.value.inMilliseconds / 1000);
+
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
       Paint()..shader = shader,
@@ -63,4 +69,32 @@ class BlurPaint extends CustomPainter {
 
   @override
   bool shouldRepaint(BlurPaint oldDelegate) => true;
+}
+
+class TimerService extends ChangeNotifier {
+  late Stopwatch _watch;
+  Timer? _timer;
+
+  Duration get currentDuration => _currentDuration;
+  Duration _currentDuration = Duration.zero;
+
+  TimerService() {
+    _watch = Stopwatch();
+    start();
+  }
+
+  void _onTick(Timer timer) {
+    _currentDuration = _watch.elapsed;
+
+    notifyListeners();
+  }
+
+  void start() {
+    if (_timer != null) return;
+
+    _timer = Timer.periodic(const Duration(milliseconds: 16), _onTick);
+    _watch.start();
+
+    notifyListeners();
+  }
 }
