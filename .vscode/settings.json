@@ -1,0 +1,10 @@
+{
+  "editor.wordWrap": "on",
+  "[glsl]": {
+    "editor.defaultFormatter": "raczzalan.webgl-glsl-editor"
+  },
+  "[frag]": {
+    "editor.defaultFormatter": "raczzalan.webgl-glsl-editor",
+    "editor.formatOnSave": true
+  }
+}
