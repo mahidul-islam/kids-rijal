@@ -28,4 +28,6 @@ flutter:
     - assets/
   shaders:
     - assets/shader/shader.frag
+    - assets/shader/first.frag
+    - assets/shader/equation.frag
 

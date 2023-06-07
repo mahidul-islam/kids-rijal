@@ -6,15 +6,15 @@ import 'dart:ui' as ui;
 import 'package:get/get.dart';
 import 'package:kids_rijal/app/routes/app_pages.dart';
 
-class ShaderExp extends StatefulWidget {
-  const ShaderExp(this.shaderPath, {Key? key}) : super(key: key);
+class ShaderFirst extends StatefulWidget {
+  const ShaderFirst(this.shaderPath, {Key? key}) : super(key: key);
   final String shaderPath;
 
   @override
-  State<ShaderExp> createState() => _ShaderExpState();
+  State<ShaderFirst> createState() => _ShaderFirstState();
 }
 
-class _ShaderExpState extends State<ShaderExp> {
+class _ShaderFirstState extends State<ShaderFirst> {
   ui.FragmentProgram? fragmentProgram;
 
   late TimerService _timerService;

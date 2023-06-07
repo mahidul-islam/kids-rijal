@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:kids_rijal/app/modules/home/widget/blur_view.dart';
-import 'package:kids_rijal/app/modules/home/widget/drawing_app.dart';
-import 'package:kids_rijal/app/modules/home/widget/picture_recorder.dart';
-import 'package:kids_rijal/app/modules/home/widget/shader.dart';
-import 'package:kids_rijal/app/modules/home/widget/world_map.dart';
+import 'package:kids_rijal/app/modules/shaders/widget/first.dart';
+import 'package:kids_rijal/app/modules/shaders/widget/shader_equation.dart';
 
-import '../controllers/home_controller.dart';
+import '../controllers/shaders_controller.dart';
 
-class HomeView extends GetView<HomeController> {
-  const HomeView({Key? key}) : super(key: key);
+class ShadersView extends GetView<ShadersController> {
+  const ShadersView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Example R&D'),
+        title: const Text('Example Shaders'),
         centerTitle: true,
       ),
       body: Stack(
@@ -23,11 +20,8 @@ class HomeView extends GetView<HomeController> {
           PageView(
             controller: controller.pageController,
             children: const <Widget>[
-              ShaderExp('assets/shader/shader.frag'),
-              PictureRecorderBoard(),
-              DrawingBoard(path: 'assets/shoe.png'),
-              WorldMap(),
-              BlurView('assets/mine.png'),
+              ShaderEquation('assets/shader/equation.frag'),
+              ShaderFirst('assets/shader/first.frag'),
             ],
           ),
           Positioned(
@@ -38,7 +32,7 @@ class HomeView extends GetView<HomeController> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 FloatingActionButton(
-                  heroTag: 'right',
+                  heroTag: 'right2',
                   onPressed: () {
                     controller.pageController.previousPage(
                         duration: .2.seconds, curve: Curves.bounceInOut);
@@ -46,7 +40,7 @@ class HomeView extends GetView<HomeController> {
                   child: const Icon(Icons.arrow_back_ios),
                 ),
                 FloatingActionButton(
-                  heroTag: 'left',
+                  heroTag: 'left2',
                   onPressed: () {
                     controller.pageController.nextPage(
                         duration: .2.seconds, curve: Curves.bounceInOut);
