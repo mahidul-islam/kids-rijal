@@ -3,9 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
-import 'package:get/get.dart';
-import 'package:kids_rijal/app/routes/app_pages.dart';
-
 class ShaderFirst extends StatefulWidget {
   const ShaderFirst(this.shaderPath, {Key? key}) : super(key: key);
   final String shaderPath;
@@ -33,28 +30,17 @@ class _ShaderFirstState extends State<ShaderFirst> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        AnimatedBuilder(
-          animation: _timerService,
-          builder: (context, child) {
-            ValueNotifier<Duration> notifier =
-                ValueNotifier(_timerService.currentDuration);
-            return CustomPaint(
-              painter: BlurPaint(notifier,
-                  shader: fragmentProgram?.fragmentShader()),
-              child: const SizedBox.expand(),
-            );
-          },
-        ),
-        Positioned.fill(
-          child: MaterialButton(
-            onPressed: () {
-              Get.toNamed(Routes.SHADERS);
-            },
-          ),
-        )
-      ],
+    return AnimatedBuilder(
+      animation: _timerService,
+      builder: (context, child) {
+        ValueNotifier<Duration> notifier =
+            ValueNotifier(_timerService.currentDuration);
+        return CustomPaint(
+          painter:
+              BlurPaint(notifier, shader: fragmentProgram?.fragmentShader()),
+          child: const SizedBox.expand(),
+        );
+      },
     );
   }
 }

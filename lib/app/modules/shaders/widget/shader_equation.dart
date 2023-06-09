@@ -3,9 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
-import 'package:get/get.dart';
-import 'package:kids_rijal/app/routes/app_pages.dart';
-
 class ShaderEquation extends StatefulWidget {
   const ShaderEquation(this.shaderPath, {Key? key}) : super(key: key);
   final String shaderPath;
@@ -33,28 +30,17 @@ class _ShaderEquationState extends State<ShaderEquation> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        AnimatedBuilder(
-          animation: _timerService,
-          builder: (context, child) {
-            ValueNotifier<Duration> notifier =
-                ValueNotifier(_timerService.currentDuration);
-            return CustomPaint(
-              painter: BlurPaint(notifier,
-                  shader: fragmentProgram?.fragmentShader()),
-              child: const SizedBox.expand(),
-            );
-          },
-        ),
-        Positioned.fill(
-          child: MaterialButton(
-            onPressed: () {
-              Get.toNamed(Routes.SHADERS);
-            },
-          ),
-        )
-      ],
+    return AnimatedBuilder(
+      animation: _timerService,
+      builder: (context, child) {
+        ValueNotifier<Duration> notifier =
+            ValueNotifier(_timerService.currentDuration);
+        return CustomPaint(
+          painter:
+              BlurPaint(notifier, shader: fragmentProgram?.fragmentShader()),
+          child: const SizedBox.expand(),
+        );
+      },
     );
   }
 }
@@ -71,9 +57,49 @@ class BlurPaint extends CustomPainter {
     if (shader == null) {
       return;
     }
+    List<List<int>> graphData = [
+      [100, 100, 2],
+      [800, 500, 1],
+      // [100, 200, 3]
+    ];
+
+    // shader?.setFloat(0, size.width);
+    // shader?.setFloat(1, size.height);
+    // shader?.setFloat(2, (graphData.length).toDouble());
+    // List<double> data = [100, 100, 2, 800, 500, 1, 100, 200, 3];
+    // for (int i = 3; i < data.length + 3; i++) {
+    //   shader?.setFloat(i, data[i - 3]);
+    // }
+    // shader?.setFloat(12, 1000);
+    // shader?.setFloat(13, 500);
+
     shader?.setFloat(0, size.width);
     shader?.setFloat(1, size.height);
-    shader?.setFloat(2, notifier.value.inMilliseconds / 1000);
+    shader?.setFloat(2, graphData.length.toDouble() ?? 3);
+    int totalDuration = 0;
+    int maxHeight = 0;
+    int shaderFloatCount = 3;
+    for (int i = 0; i < 3; i++) {
+      if (graphData.length > i) {
+        totalDuration = totalDuration + graphData[i].first;
+        if (graphData[i].length >= 2) {
+          if (graphData[i][1] > maxHeight) {
+            maxHeight = graphData[i][1];
+          }
+        }
+      }
+      for (int j = 0; j < 3; j++) {
+        if (graphData.length > i) {
+          shader?.setFloat(shaderFloatCount, graphData[i][j].toDouble());
+        } else {
+          shader?.setFloat(shaderFloatCount, 0);
+        }
+        shaderFloatCount = shaderFloatCount + 1;
+      }
+    }
+    shader?.setFloat(shaderFloatCount, totalDuration.toDouble());
+    shaderFloatCount = shaderFloatCount + 1;
+    shader?.setFloat(shaderFloatCount, maxHeight.toDouble());
 
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),

@@ -5,6 +5,7 @@
   },
   "[frag]": {
     "editor.defaultFormatter": "raczzalan.webgl-glsl-editor",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
   }
 }
