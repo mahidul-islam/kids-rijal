@@ -60,22 +60,12 @@ class BlurPaint extends CustomPainter {
     List<List<int>> graphData = [
       [100, 100, 2],
       [800, 500, 1],
-      // [100, 200, 3]
+      [100, 200, 3]
     ];
-
-    // shader?.setFloat(0, size.width);
-    // shader?.setFloat(1, size.height);
-    // shader?.setFloat(2, (graphData.length).toDouble());
-    // List<double> data = [100, 100, 2, 800, 500, 1, 100, 200, 3];
-    // for (int i = 3; i < data.length + 3; i++) {
-    //   shader?.setFloat(i, data[i - 3]);
-    // }
-    // shader?.setFloat(12, 1000);
-    // shader?.setFloat(13, 500);
 
     shader?.setFloat(0, size.width);
     shader?.setFloat(1, size.height);
-    shader?.setFloat(2, graphData.length.toDouble() ?? 3);
+    shader?.setFloat(2, graphData.length.toDouble());
     int totalDuration = 0;
     int maxHeight = 0;
     int shaderFloatCount = 3;
