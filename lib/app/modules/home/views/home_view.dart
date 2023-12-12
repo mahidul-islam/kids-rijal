@@ -25,7 +25,7 @@ class HomeView extends GetView<HomeController> {
             children: const <Widget>[
               ShaderExp('assets/shader/shader.frag'),
               PictureRecorderBoard(),
-              DrawingBoard(path: 'assets/shoe.png'),
+              DrawingBoard(path: 'assets/appleee.png'),
               WorldMap(),
               BlurView('assets/mine.png'),
             ],

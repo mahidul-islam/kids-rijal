@@ -30,4 +30,5 @@ flutter:
     - assets/shader/shader.frag
     - assets/shader/first.frag
     - assets/shader/equation.frag
+    - assets/shader/shape_func.frag
 

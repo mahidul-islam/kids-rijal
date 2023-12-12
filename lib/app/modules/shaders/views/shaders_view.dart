@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kids_rijal/app/modules/shaders/widget/first.dart';
 import 'package:kids_rijal/app/modules/shaders/widget/shader_equation.dart';
+import 'package:kids_rijal/app/modules/shaders/widget/shape_function.dart';
 
 import '../controllers/shaders_controller.dart';
 
@@ -20,6 +21,7 @@ class ShadersView extends GetView<ShadersController> {
           PageView(
             controller: controller.pageController,
             children: const <Widget>[
+              ShapeFunction('assets/shader/shape_func.frag'),
               ShaderEquation('assets/shader/equation.frag'),
               ShaderFirst('assets/shader/first.frag'),
             ],

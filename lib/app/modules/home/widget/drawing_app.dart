@@ -83,7 +83,7 @@ class _DrawingPainter extends CustomPainter {
   Paint clearBrush = Paint()
     ..isAntiAlias = true
     ..color = Colors.transparent
-    ..strokeWidth = 40
+    ..strokeWidth = 80
     ..strokeCap = StrokeCap.round
     ..blendMode = BlendMode.clear;
 
